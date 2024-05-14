@@ -13,3 +13,6 @@ openssl req -new -key server.key > server.csr
 openssl x509 -days 3650 -req -sha256 -signkey server.key < server.csr > server.crt
 openssl x509 -text < server.crt
 ```
+
+## 参考
+- https://docs.gitlab.com/
