@@ -23,28 +23,28 @@ services:
     # configs:
     #   - source: gitlab
     #     target: /omnibus_config.rb
-    # secrets:
-    #   - gitlab_root_password
+    secrets:
+      - gitlab_root_password
     volumes:
       - ./gitlab/config:/etc/gitlab
       - ./gitlab/logs:/var/log/gitlab
       - ./gitlab/data:/var/opt/gitlab
 
-  # gitlab-runner:
-  #   image: gitlab/gitlab-runner:alpine
-  #   hostname: ubuntu-gitlab.local
-  #   deploy:
-  #     mode: replicated
-  #     replicas: 4
-  #   restart: always
-  #   volumes:
-  #     - ./gitlab-runner/config:/etc/gitlab-runner
-  #     - /var/run/docker.sock:/var/run/docker.sock
+  gitlab-runner:
+    image: gitlab/gitlab-runner:alpine
+    hostname: ubuntu-gitlab.local
+    deploy:
+      mode: replicated
+      replicas: 4
+    restart: always
+    volumes:
+      - ./gitlab-runner/config:/etc/gitlab-runner
+      - /var/run/docker.sock:/var/run/docker.sock
 
 # configs:
 #   gitlab:
 #     file: ./gitlab.rb
 
-# secrets:
-#   gitlab_root_password:
-#     file: ./root_password.txt
+secrets:
+  gitlab_root_password:
+    file: ./root_password.txt
