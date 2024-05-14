@@ -5,14 +5,17 @@ services:
     image: gitlab/gitlab-ce:latest
     container_name: gitlab
     restart: always
-    # hostname: 'gitlab.example.com'
+    hostname: ubuntu-gitlab.local
     ports:
-      # - "22:22"
+      - "22:22"
       - "80:80"
       - "443:443"
     # shm_size: '256m'
-    # environment:
-    #   GITLAB_OMNIBUS_CONFIG: "from_file('/omnibus_config.rb')"
+    environment:
+      TZ: "Asia/Tokyo"
+      GITLAB_OMNIBUS_CONFIG: |
+        nginx['redirect_http_to_https'] = true
+      # "from_file('/omnibus_config.rb')"
     # configs:
     #   - source: gitlab
     #     target: /omnibus_config.rb
@@ -25,6 +28,7 @@ services:
 
   gitlab-runner:
     image: gitlab/gitlab-runner:alpine
+    hostname: ubuntu-gitlab.local
     deploy:
       mode: replicated
       replicas: 4
