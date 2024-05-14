@@ -1,4 +1,5 @@
 version: "3.6"
+
 services:
   gitlab:
     image: gitlab/gitlab-ce:latest
@@ -21,14 +22,25 @@ services:
         target: /omnibus_config.rb
     secrets:
       - gitlab_root_password
+    volumes:
+      - ./gitlab/config:/etc/gitlab
+      - ./gitlab/logs:/var/log/gitlab
+      - ./gitlab/data:/var/opt/gitlab
+
   gitlab-runner:
     image: gitlab/gitlab-runner:alpine
     deploy:
       mode: replicated
       replicas: 4
+    restart: always
+    volumes:
+      - ./gitlab-runner/config:/etc/gitlab-runner
+      - /var/run/docker.sock:/var/run/docker.sock
+
 configs:
   gitlab:
     file: ./gitlab.rb
+
 secrets:
   gitlab_root_password:
     file: ./root_password.txt
