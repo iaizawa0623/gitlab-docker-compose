@@ -7,21 +7,17 @@ services:
     restart: always
     # hostname: 'gitlab.example.com'
     ports:
-      - "22:22"
+      # - "22:22"
       - "80:80"
       - "443:443"
-    volumes:
-      - $GITLAB_HOME/data:/var/opt/gitlab
-      - $GITLAB_HOME/logs:/var/log/gitlab
-      - $GITLAB_HOME/config:/etc/gitlab
-    shm_size: '256m'
-    environment:
-      GITLAB_OMNIBUS_CONFIG: "from_file('/omnibus_config.rb')"
-    configs:
-      - source: gitlab
-        target: /omnibus_config.rb
-    secrets:
-      - gitlab_root_password
+    # shm_size: '256m'
+    # environment:
+    #   GITLAB_OMNIBUS_CONFIG: "from_file('/omnibus_config.rb')"
+    # configs:
+    #   - source: gitlab
+    #     target: /omnibus_config.rb
+    # secrets:
+    #   - gitlab_root_password
     volumes:
       - ./gitlab/config:/etc/gitlab
       - ./gitlab/logs:/var/log/gitlab
@@ -37,10 +33,10 @@ services:
       - ./gitlab-runner/config:/etc/gitlab-runner
       - /var/run/docker.sock:/var/run/docker.sock
 
-configs:
-  gitlab:
-    file: ./gitlab.rb
+# configs:
+#   gitlab:
+#     file: ./gitlab.rb
 
-secrets:
-  gitlab_root_password:
-    file: ./root_password.txt
+# secrets:
+#   gitlab_root_password:
+#     file: ./root_password.txt
