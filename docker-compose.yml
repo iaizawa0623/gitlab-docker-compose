@@ -63,6 +63,8 @@ services:
       POSTGRES_USER: gitlab
       POSTGRES_PASSWORD: gitlab
       POSTGRES_DB: gitlab
+    volumes:
+      - gitlab-db:/var/lib/postgresql/data
 
 # configs:
 #   gitlab:
@@ -71,3 +73,6 @@ services:
 secrets:
   gitlab_root_password:
     file: ./root_password.txt
+
+volumes:
+  gitlab-db:
