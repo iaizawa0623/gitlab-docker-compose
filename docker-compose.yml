@@ -21,7 +21,7 @@ services:
         nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/server.key"
         gitlab_rails['time_zone'] = 'Tokyo'
         gitlab_rails['db_adapter'] = 'postgresql'
-        gitlab_rails['db_host'] = 'db'
+        gitlab_rails['db_host'] = 'gitlab-db'
         gitlab_rails['db_port'] = 5432
         gitlab_rails['db_database'] = 'gitlab'
         gitlab_rails['db_username'] = 'gitlab'
@@ -37,10 +37,11 @@ services:
       - ./gitlab/logs:/var/log/gitlab
       - ./gitlab/data:/var/opt/gitlab
     depends_on:
-      - db
+      - gitlab-db
 
-  runner:
+  gitlab-runner:
     image: gitlab/gitlab-runner:alpine
+    container_name: gitlab-runner
     hostname: ubuntu-gitlab.local
     deploy:
       mode: replicated
@@ -52,9 +53,10 @@ services:
     depends_on:
       - gitlab
   
-  db:
+  gitlab-db:
     image: postgres
     restart: always
+    container_name: gitlab-db
     expose:
       - "5432"
     environment:
