@@ -10,29 +10,10 @@ services:
       - "443:443"
     environment:
       TZ: "Asia/Tokyo"
-      # GITLAB_OMNIBUS_CONFIG: |
-      #   # external_url 'https://gitlab.local'
-      #   # nginx['listen_port'] = 443
-      #   # nginx['redirect_http_to_https'] = true
-      #   # nginx['ssl_certificate'] = "/etc/gitlab/ssl/server.crt"
-      #   # nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/server.key"
-      #   # gitlab_rails['time_zone'] = 'Tokyo'
-      #   # gitlab_rails['db_adapter'] = 'postgresql'
-      #   # gitlab_rails['db_host'] = 'gitlab-db'
-      #   # gitlab_rails['db_port'] = 5432
-      #   # gitlab_rails['db_database'] = 'gitlab'
-      #   # gitlab_rails['db_username'] = 'gitlab'
-      #   # gitlab_rails['db_password'] = 'gitlab'
-      # "from_file('/omnibus_config.rb')"
-    # configs:
-    #   - source: gitlab
-    #     target: /omnibus_config.rb
-    secrets:
-      - gitlab_root_password
-    # volumes:
-    #   - ./gitlab/config:/etc/gitlab
-    #   - ./gitlab/logs:/var/log/gitlab
-    #   - ./gitlab/data:/var/opt/gitlab
+    volumes:
+      - config:/etc/gitlab
+      - logs:/var/log/gitlab
+      - data:/var/opt/gitlab
     depends_on:
       - db
 
@@ -44,13 +25,13 @@ services:
       replicas: 1
     restart: always
     volumes:
-      # - ./gitlab-runner:/etc/gitlab-runner
+      - runner-config:/etc/gitlab-runner
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - gitlab
   
   db:
-    image: postgres
+    build: ./db
     restart: always
     expose:
       - "5432"
@@ -61,13 +42,9 @@ services:
     volumes:
       - db:/var/lib/postgresql/data
 
-# configs:
-#   gitlab:
-#     file: ./gitlab.rb
-
-secrets:
-  gitlab_root_password:
-    file: ./root_password.txt
-
 volumes:
   db:
+  config:
+  runner-config:
+  logs:
+  data:

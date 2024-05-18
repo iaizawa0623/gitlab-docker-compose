@@ -65,7 +65,7 @@ external_url 'https://gitlab.local'
 ################################################################################
 # gitlab_rails['gitlab_ssh_host'] = 'ssh.host_example.com'
 # gitlab_rails['gitlab_ssh_user'] = ''
-gitlab_rails['time_zone'] = 'JST'
+gitlab_rails['time_zone'] = 'Tokyo'
 
 ### Rails asset / CDN host
 ###! Defines a url for a host/cdn to use for the Rails assets
@@ -727,7 +727,7 @@ gitlab_rails['time_zone'] = 'JST'
 # gitlab_rails['display_initial_root_password'] = false
 
 #### Toggle if initial root password should be written to /etc/gitlab/initial_root_password
-gitlab_rails['store_initial_root_password'] = true
+# gitlab_rails['store_initial_root_password'] = true
 
 #### Set path to an initial license to be used while bootstrapping GitLab.
 ####! **Only applicable on initial setup, future license updates need to be done via UI.

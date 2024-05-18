@@ -1,9 +1,4 @@
 
-root_password.txt
-
-logs/
-data/
-
 *.key
 *.csr
 *.crt
