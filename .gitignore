@@ -1,3 +1,6 @@
-gitlab/
+config/
+logs/
+data/
+
 gitlab-runner/
 root_password.txt
