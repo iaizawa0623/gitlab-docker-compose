@@ -3,7 +3,7 @@ gitlab-docker-compose
 
 ## installation
 
-```
+```bash
 mkdir gitlab-runner
 
 cd gitlab/ssl
