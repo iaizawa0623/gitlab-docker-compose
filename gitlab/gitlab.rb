@@ -744,14 +744,14 @@ gitlab_rails['time_zone'] = 'Tokyo'
 ### GitLab database settings
 ###! Docs: https://docs.gitlab.com/omnibus/settings/database.html
 ###! **Only needed if you use an external database.**
-gitlab_rails['db_adapter'] = "postgresql"
-gitlab_rails['db_encoding'] = "unicode"
+# gitlab_rails['db_adapter'] = "postgresql"
+# gitlab_rails['db_encoding'] = "unicode"
 # gitlab_rails['db_collation'] = nil
-gitlab_rails['db_database'] = "db"
-gitlab_rails['db_username'] = "postgres"
-gitlab_rails['db_password'] = "n7K.~H(*aSa.kPNz"
-gitlab_rails['db_host'] = "gitlab"
-gitlab_rails['db_port'] = 5432
+# gitlab_rails['db_database'] = "db"
+# gitlab_rails['db_username'] = "postgres"
+# gitlab_rails['db_password'] = "n7K.~H(*aSa.kPNz"
+# gitlab_rails['db_host'] = "gitlab"
+# gitlab_rails['db_port'] = 5432
 # gitlab_rails['db_socket'] = nil
 # gitlab_rails['db_sslmode'] = nil
 # gitlab_rails['db_sslcompression'] = 0

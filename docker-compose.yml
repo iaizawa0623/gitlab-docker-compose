@@ -10,6 +10,14 @@ services:
       - "443:443"
     environment:
       TZ: "Asia/Tokyo"
+      GITLAB_OMNIBUS_CONFIG: |
+        gitlab_rails['db_adapter'] = 'postgresql'
+        gitlab_rails['db_host'] = 'db'
+        gitlab_rails['db_port'] = 5432
+        gitlab_rails['db_database'] = 'gitlab'
+        gitlab_rails['db_username'] = 'gitlab'
+        gitlab_rails['db_password'] = 'n7K.~H(*aSa.kPNz'
+      GITLAB
     volumes:
       - config:/etc/gitlab
       - logs:/var/log/gitlab
@@ -36,7 +44,7 @@ services:
     expose:
       - "5432"
     environment:
-      POSTGRES_USER: postgres
+      POSTGRES_USER: gitlab
       POSTGRES_PASSWORD: n7K.~H(*aSa.kPNz
       POSTGRES_DB: gitlab
     volumes:
