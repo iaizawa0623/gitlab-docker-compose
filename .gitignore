@@ -1,4 +1,6 @@
 
+gitlab/
+
 *.key
 *.csr
 *.crt

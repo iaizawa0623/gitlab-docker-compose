@@ -1,7 +1,8 @@
 
 services:
   gitlab:
-    build: ./gitlab
+    container_name: gitlab
+    image: gitlab/gitlab-ce:latest
     restart: always
     hostname: gitlab.local
     ports:
@@ -10,48 +11,67 @@ services:
       - "443:443"
     environment:
       TZ: "Asia/Tokyo"
-      GITLAB_OMNIBUS_CONFIG: |
-        gitlab_rails['db_adapter'] = 'postgresql'
-        gitlab_rails['db_host'] = 'db'
-        gitlab_rails['db_port'] = 5432
-        gitlab_rails['db_database'] = 'gitlab'
-        gitlab_rails['db_username'] = 'gitlab'
-        gitlab_rails['db_password'] = 'n7K.~H(*aSa.kPNz'
+      GITLAB_OMNIBUS_CONFIG: "from_file('/omnibus_config.rb')"
+    configs:
+      - source: gitlab
+        target: /omnibus_config.rb
+    secrets:
+      - gitlab_root_password
     volumes:
-      - config:/etc/gitlab
-      - logs:/var/log/gitlab
-      - data:/var/opt/gitlab
+      - ./gitlab/config:/etc/gitlab
+      - ./gitlab/logs:/var/log/gitlab
+      - ./gitlab/data:/var/opt/gitlab
+      - ./ssl:/etc/ssl/certs
+    networks:
+      - gitlab
     depends_on:
       - db
 
-  runner:
-    build: ./gitlab-runner
-    hostname: gitlab.local
-    deploy:
-      mode: replicated
-      replicas: 1
-    restart: always
-    volumes:
-      - runner-config:/etc/gitlab-runner
-      - /var/run/docker.sock:/var/run/docker.sock
-    depends_on:
-      - gitlab
-  
+  # runner:
+  #   container_name: runner
+  #   image: gitlab/gitlab-runner:latest
+  #   hostname: gitlab.local
+  #   deploy:
+  #     mode: replicated
+  #     replicas: 1
+  #   restart: always
+  #   # volumes:
+  #   #   - git/runner-config:/etc/gitlab-runner
+  #   #   - /var/run/docker.sock:/var/run/docker.sock
+  #   networks:
+  #     - gitlab
+  #   depends_on:
+  #     - gitlab
+
   db:
-    build: ./db
+    container_name: db
+    image: postgres:latest
     restart: always
     expose:
       - "5432"
     environment:
+      POSTGRES_DB: gitlab
       POSTGRES_USER: gitlab
       POSTGRES_PASSWORD: n7K.~H(*aSa.kPNz
-      POSTGRES_DB: gitlab
+    networks:
+      - gitlab
     volumes:
       - db:/var/lib/postgresql/data
 
+configs:
+  gitlab:
+    file: ./gitlab.rb
+
+secrets:
+  gitlab_root_password:
+    file: ./root_password.txt
+
 volumes:
   db:
-  config:
-  runner-config:
-  logs:
-  data:
+  # config:
+  # runner-config:
+  # logs:
+  # data:
+
+networks:
+  gitlab:

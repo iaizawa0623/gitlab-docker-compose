@@ -1,1 +1,0 @@
-FROM --platform=amd64 postgres

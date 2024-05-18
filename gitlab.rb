@@ -744,14 +744,14 @@ gitlab_rails['time_zone'] = 'Tokyo'
 ### GitLab database settings
 ###! Docs: https://docs.gitlab.com/omnibus/settings/database.html
 ###! **Only needed if you use an external database.**
-# gitlab_rails['db_adapter'] = "postgresql"
+gitlab_rails['db_adapter'] = "postgresql"
 # gitlab_rails['db_encoding'] = "unicode"
 # gitlab_rails['db_collation'] = nil
-# gitlab_rails['db_database'] = "db"
-# gitlab_rails['db_username'] = "postgres"
-# gitlab_rails['db_password'] = "n7K.~H(*aSa.kPNz"
-# gitlab_rails['db_host'] = "gitlab"
-# gitlab_rails['db_port'] = 5432
+gitlab_rails['db_database'] = "gitlab"
+gitlab_rails['db_username'] = "gitlab"
+gitlab_rails['db_password'] = "n7K.~H(*aSa.kPNz"
+gitlab_rails['db_host'] = "db"
+gitlab_rails['db_port'] = 5432
 # gitlab_rails['db_socket'] = nil
 # gitlab_rails['db_sslmode'] = nil
 # gitlab_rails['db_sslcompression'] = 0
@@ -1689,7 +1689,7 @@ nginx['redirect_http_to_https_port'] = 80
 ##! if ssl_verify_client on, verification depth in the client certificates chain
 # nginx['ssl_verify_depth'] = "1"
 
-nginx['ssl_certificate'] = "/etc/gitlab/ssl/#{node['fqdn']}.crt"
+nginx['ssl_certificate'] = "/etc/certs/ssl/#{node['fqdn']}.crt"
 nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/#{node['fqdn']}.key"
 # nginx['ssl_ciphers'] = "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384"
 # nginx['ssl_prefer_server_ciphers'] = "off"
