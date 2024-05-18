@@ -17,7 +17,6 @@ services:
         gitlab_rails['db_database'] = 'gitlab'
         gitlab_rails['db_username'] = 'gitlab'
         gitlab_rails['db_password'] = 'n7K.~H(*aSa.kPNz'
-      GITLAB
     volumes:
       - config:/etc/gitlab
       - logs:/var/log/gitlab
