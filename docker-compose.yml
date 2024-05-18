@@ -4,24 +4,24 @@ services:
     container_name: gitlab
     image: gitlab/gitlab-ce:latest
     restart: always
-    hostname: gitlab.local
+    hostname: ${GITLAB_HOSTNAME}
     ports:
       - "22:22"
       - "80:80"
       - "443:443"
+    env_file:
+      - .env
     environment:
       TZ: "Asia/Tokyo"
       GITLAB_OMNIBUS_CONFIG: "from_file('/omnibus_config.rb')"
     configs:
       - source: gitlab
         target: /omnibus_config.rb
-    secrets:
-      - gitlab_root_password
     volumes:
       - ./gitlab/config:/etc/gitlab
       - ./gitlab/logs:/var/log/gitlab
       - ./gitlab/data:/var/opt/gitlab
-      - ./ssl:/etc/ssl/certs
+      - ./certs:/etc/certs
     networks:
       - gitlab
     depends_on:
@@ -30,7 +30,7 @@ services:
   # runner:
   #   container_name: runner
   #   image: gitlab/gitlab-runner:latest
-  #   hostname: gitlab.local
+  #   hostname: ${GITLAB_HOSTNAME}
   #   deploy:
   #     mode: replicated
   #     replicas: 1
@@ -52,7 +52,7 @@ services:
     environment:
       POSTGRES_DB: gitlab
       POSTGRES_USER: gitlab
-      POSTGRES_PASSWORD: n7K.~H(*aSa.kPNz
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     networks:
       - gitlab
     volumes:

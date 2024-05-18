@@ -29,7 +29,7 @@
 ##! On AWS EC2 instances, we also attempt to fetch the public hostname/IP
 ##! address from AWS. For more details, see:
 ##! https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-retrieval.html
-external_url 'https://gitlab.local'
+external_url "https://#{ENV['GITLAB_HOSTNAME']}"
 
 ## Roles for multi-instance GitLab
 ##! The default is to have no roles enabled, which results in GitLab running as an all-in-one instance.
@@ -720,7 +720,7 @@ gitlab_rails['time_zone'] = 'Tokyo'
 #### Change the initial default admin password and shared runner registration tokens.
 ####! **Only applicable on initial setup, changing these settings after database
 ####!   is created and seeded won't yield any change.**
-# gitlab_rails['initial_root_password'] = "password"
+gitlab_rails['initial_root_password'] = ENV['GITLAB_ROOT_PASSWORD']
 # gitlab_rails['initial_shared_runners_registration_token'] = "token"
 
 #### Toggle if root password should be printed to STDOUT during initialization
@@ -749,7 +749,7 @@ gitlab_rails['db_adapter'] = "postgresql"
 # gitlab_rails['db_collation'] = nil
 gitlab_rails['db_database'] = "gitlab"
 gitlab_rails['db_username'] = "gitlab"
-gitlab_rails['db_password'] = "n7K.~H(*aSa.kPNz"
+gitlab_rails['db_password'] = ENV['DB_PASSWORD']
 gitlab_rails['db_host'] = "db"
 gitlab_rails['db_port'] = 5432
 # gitlab_rails['db_socket'] = nil
@@ -1689,8 +1689,8 @@ nginx['redirect_http_to_https_port'] = 80
 ##! if ssl_verify_client on, verification depth in the client certificates chain
 # nginx['ssl_verify_depth'] = "1"
 
-nginx['ssl_certificate'] = "/etc/certs/ssl/#{node['fqdn']}.crt"
-nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/#{node['fqdn']}.key"
+nginx['ssl_certificate'] = "/etc/certs/#{node['fqdn']}.crt"
+nginx['ssl_certificate_key'] = "/etc/certs/#{node['fqdn']}.key"
 # nginx['ssl_ciphers'] = "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384"
 # nginx['ssl_prefer_server_ciphers'] = "off"
 

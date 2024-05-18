@@ -1,8 +1,11 @@
 
 root_password.txt
 
+certs/
 gitlab/
 
 *.key
 *.csr
 *.crt
+
+.env
