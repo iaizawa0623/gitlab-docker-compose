@@ -1,3 +1,3 @@
-FROM gitlab/gitlab-ce:latest
+FROM --platform=amd64 gitlab/gitlab-ce:latest
 
-COPY ./* /etc/gitlab/
+COPY . /etc/gitlab

@@ -1,3 +1,3 @@
-FROM gitlab/gitlab-runner:alpine
+FROM --platform=amd64 gitlab/gitlab-runner:alpine
 
-COPY ./* /etc/gitlab-runner/
+COPY . /etc/gitlab-runner
