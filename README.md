@@ -28,5 +28,10 @@ openssl x509 -days 3650 -req -sha256 -signkey $DOMAIN.key -extfile extfile.txt <
 openssl x509 -text < $DOMAIN.crt
 ```
 
+## Run
+```bash
+docker compose up -d
+```
+
 ## 参考
 - https://docs.gitlab.com/
