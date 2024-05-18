@@ -1,20 +1,17 @@
-version: "3.6"
 
 services:
   gitlab:
-    image: gitlab/gitlab-ce:latest
-    container_name: gitlab
+    image: ./gitlab
     restart: always
-    hostname: ubuntu-gitlab.local
+    hostname: gitlab.local
     ports:
       - "22:22"
-      # - "80:80"
+      - "80:80"
       - "443:443"
-    # shm_size: '256m'
     environment:
       TZ: "Asia/Tokyo"
       GITLAB_OMNIBUS_CONFIG: |
-        external_url 'https://ubuntu-gitlab.local'
+        external_url 'https://gitlab.local'
         nginx['listen_port'] = 443
         nginx['redirect_http_to_https'] = true
         nginx['ssl_certificate'] = "/etc/gitlab/ssl/server.crt"
@@ -32,39 +29,37 @@ services:
     #     target: /omnibus_config.rb
     secrets:
       - gitlab_root_password
-    volumes:
-      - ./gitlab/config:/etc/gitlab
-      - ./gitlab/logs:/var/log/gitlab
-      - ./gitlab/data:/var/opt/gitlab
+    # volumes:
+    #   - ./gitlab/config:/etc/gitlab
+    #   - ./gitlab/logs:/var/log/gitlab
+    #   - ./gitlab/data:/var/opt/gitlab
     depends_on:
-      - gitlab-db
+      - db
 
-  gitlab-runner:
-    image: gitlab/gitlab-runner:alpine
-    container_name: gitlab-runner
-    hostname: ubuntu-gitlab.local
+  runner:
+    image: ./gitlab-runner
+    hostname: gitlab.local
     deploy:
       mode: replicated
       replicas: 1
     restart: always
     volumes:
-      - ./gitlab-runner:/etc/gitlab-runner
+      # - ./gitlab-runner:/etc/gitlab-runner
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - gitlab
   
-  gitlab-db:
+  db:
     image: postgres
     restart: always
-    container_name: gitlab-db
     expose:
       - "5432"
     environment:
-      POSTGRES_USER: gitlab
-      POSTGRES_PASSWORD: gitlab
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: n7K.~H(*aSa.kPNz
       POSTGRES_DB: gitlab
     volumes:
-      - gitlab-db:/var/lib/postgresql/data
+      - db:/var/lib/postgresql/data
 
 # configs:
 #   gitlab:
@@ -75,4 +70,4 @@ secrets:
     file: ./root_password.txt
 
 volumes:
-  gitlab-db:
+  db:

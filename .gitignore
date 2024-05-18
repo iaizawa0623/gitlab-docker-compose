@@ -1,9 +1,8 @@
-config/
+
+root_password.txt
+
 logs/
 data/
-
-gitlab-runner/
-root_password.txt
 
 *.key
 *.csr
