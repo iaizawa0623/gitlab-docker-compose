@@ -21,7 +21,6 @@ services:
       - ./gitlab/config:/etc/gitlab
       - ./gitlab/logs:/var/log/gitlab
       - ./gitlab/data:/var/opt/gitlab
-      - ./certs:/etc/certs
     networks:
       - gitlab
     depends_on:

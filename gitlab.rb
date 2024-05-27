@@ -1681,7 +1681,7 @@ nginx['redirect_http_to_https'] = true
 nginx['redirect_http_to_https_port'] = 80
 
 ##! Most root CA's are included by default
-# nginx['ssl_client_certificate'] = "/etc/gitlab/ssl/ca.crt"
+nginx['ssl_client_certificate'] = "/etc/gitlab/ssl/ca.crt"
 
 ##! enable/disable 2-way SSL client authentication
 # nginx['ssl_verify_client'] = "off"
@@ -1689,8 +1689,8 @@ nginx['redirect_http_to_https_port'] = 80
 ##! if ssl_verify_client on, verification depth in the client certificates chain
 # nginx['ssl_verify_depth'] = "1"
 
-nginx['ssl_certificate'] = "/certs/#{node['fqdn']}.crt"
-nginx['ssl_certificate_key'] = "/certs/#{node['fqdn']}.key"
+nginx['ssl_certificate'] = "/etc/gitlab/ssl/#{node['fqdn']}.crt"
+nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/#{node['fqdn']}.key"
 # nginx['ssl_ciphers'] = "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384"
 # nginx['ssl_prefer_server_ciphers'] = "off"
 

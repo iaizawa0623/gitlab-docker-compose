@@ -11,22 +11,20 @@ vi .env
 
 ### オレオレ証明書を作成する場合(公開サーバでは使用しないでください!)
 ```bash
-mkdir -p certs
-cd certs
-
-CA_NAME="`whoami`_CA"
+mkdir -p gitlab/config/ssl
+cd gitlab/config/ssl
 
 # rootCAの秘密鍵を作成
-openssl genrsa -out $CA_NAME.key -aes256 2048
+openssl genrsa -out ca.key -aes256 2048
 
 # rootCAの秘密鍵の内容を確認
-openssl rsa -text -noout -in $CA_NAME.key
+openssl rsa -text -noout -in ca.key
 
 # rootCAの証明書署名要求の作成
-openssl req -new -key $CA_NAME.key -out $CA_NAME.csr -subj "/C=JP/ST=Tokyo/O=iaizawa/CN=$CA_NAME"
+openssl req -new -key ca.key -out ca.csr -subj "/C=JP/ST=Tokyo/O=iaizawa/CN=ca"
 
 # rootCAのCSRの内容を確認
-openssl req -text -noout -in $CA_NAME.csr
+openssl req -text -noout -in ca.csr
 
 # 「X509.V3」の設定
 cat > rootca_v3.ext << EOF
@@ -36,10 +34,10 @@ keyUsage               = critical, keyCertSign, cRLSign
 EOF
 
 # rootCAの証明書の作成（自己署名）
-openssl x509 -req -in $CA_NAME.csr -signkey $CA_NAME.key -days 365 -sha256 -extfile rootca_v3.ext -out $CA_NAME.crt
+openssl x509 -req -in ca.csr -signkey ca.key -days 365 -sha256 -extfile rootca_v3.ext -out ca.crt
 
 # rootCAの証明書の内容を確認
-openssl x509 -text -noout -in $CA_NAME.crt
+openssl x509 -text -noout -in ca.crt
 
 # オレオレ証明書を作成する
 if [ `hostname | grep '.local'` ] ; then
@@ -56,7 +54,7 @@ openssl genrsa 2048 > $DOMAIN.key
 openssl req -new -key $DOMAIN.key -subj "/C=JP/ST=Tokyo/O=iaizawa/CN=$DOMAIN" > $DOMAIN.csr
 
 # プライベート認証局で署名してサーバー証明書を作成
-openssl x509 -in $DOMAIN.csr -CA $CA_NAME.crt -CAkey $CA_NAME.key -days 3650 -req -sha256 -extfile extfile.txt > $DOMAIN.crt
+openssl x509 -in $DOMAIN.csr -CA ca.crt -CAkey ca.key -days 3650 -req -sha256 -extfile extfile.txt > $DOMAIN.crt
 
 # サーバー証明書の中身を確認
 openssl x509 -text < $DOMAIN.crt
