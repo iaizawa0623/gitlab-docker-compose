@@ -41,7 +41,11 @@ openssl x509 -req -in $CA_NAME.csr -signkey $CA_NAME.key -days 365 -sha256 -extf
 openssl x509 -text -noout -in $CA_NAME.crt
 
 # オレオレ証明書を作成する
-DOMAIN=`hostname`
+if [ `hostname | grep '.local'` ] ; then
+  DOMAIN=`hostname`
+else
+  DOMAIN=`hostname`.local
+fi
 echo "subjectAltName = DNS:$DOMAIN" > extfile.txt
 
 # サーバー秘密鍵を作成
