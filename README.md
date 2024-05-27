@@ -11,9 +11,10 @@ vi .env
 
 ### オレオレ証明書を作成する場合(公開サーバでは使用しないでください!)
 ```bash
-CA_NAME="`whoami`_CA"
 mkdir -p certs
 cd certs
+
+CA_NAME="`whoami`_CA"
 
 # rootCAの秘密鍵を作成
 openssl genrsa -out $CA_NAME.key -aes256 2048
@@ -59,6 +60,8 @@ openssl x509 -in $DOMAIN.csr -CA $CA_NAME.crt -CAkey $CA_NAME.key -days 3650 -re
 
 # サーバー証明書の中身を確認
 openssl x509 -text < $DOMAIN.crt
+
+cd -
 ```
 
 ## Run
