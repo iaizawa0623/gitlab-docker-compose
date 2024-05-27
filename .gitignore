@@ -1,7 +1,7 @@
 
 root_password.txt
 
-certs/
+ssl/
 gitlab/
 
 *.key

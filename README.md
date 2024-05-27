@@ -13,18 +13,19 @@ vi .env
 ```bash
 mkdir -p ssl
 cd ssl
+CA="`whoami`_CA"
 
 # rootCAの秘密鍵を作成
-openssl genrsa -out ca.key -aes256 2048
+openssl genrsa -out $CA.key -aes256 2048
 
 # rootCAの秘密鍵の内容を確認
-openssl rsa -text -noout -in ca.key
+# openssl rsa -text -noout -in $CA.key
 
 # rootCAの証明書署名要求の作成
-openssl req -new -key ca.key -out ca.csr -subj "/C=JP/ST=Tokyo/O=iaizawa/CN=ca"
+openssl req -new -key $CA.key -out $CA.csr -subj "/C=JP/ST=Tokyo/O=iaizawa/CN=$CA"
 
 # rootCAのCSRの内容を確認
-openssl req -text -noout -in ca.csr
+# openssl req -text -noout -in $CA.csr
 
 # 「X509.V3」の設定
 cat > rootca_v3.ext << EOF
@@ -34,10 +35,10 @@ keyUsage               = critical, keyCertSign, cRLSign
 EOF
 
 # rootCAの証明書の作成（自己署名）
-openssl x509 -req -in ca.csr -signkey ca.key -days 3650 -sha256 -extfile rootca_v3.ext -out ca.crt
+openssl x509 -req -in $CA.csr -signkey $CA.key -days 3650 -sha256 -extfile rootca_v3.ext -out $CA.crt
 
 # rootCAの証明書の内容を確認
-openssl x509 -text -noout -in ca.crt
+# openssl x509 -text -noout -in $CA.crt
 
 # オレオレ証明書を作成する
 if [ `hostname | grep '.local'` ] ; then
@@ -54,14 +55,10 @@ openssl genrsa 2048 > $DOMAIN.key
 openssl req -new -key $DOMAIN.key -subj "/C=JP/ST=Tokyo/O=iaizawa/CN=$DOMAIN" > $DOMAIN.csr
 
 # プライベート認証局で署名してサーバー証明書を作成
-openssl x509 -in $DOMAIN.csr -CA ca.crt -CAkey ca.key -days 3650 -req -sha256 -extfile extfile.txt > $DOMAIN.crt
+openssl x509 -in $DOMAIN.csr -CA $CA.crt -CAkey $CA.key -days 3650 -req -sha256 -extfile extfile.txt > $DOMAIN.crt
 
 # サーバー証明書の中身を確認
-openssl x509 -text < $DOMAIN.crt
-
-# pemファイルへ変換
-openssl x509 -in $DOMAIN.crt -out $DOMAIN.der -outform DER
-openssl x509 -in $DOMAIN.der -inform DER -out $DOMAIN.pem -outform pem
+# openssl x509 -text < $DOMAIN.crt
 
 cd -
 ```
