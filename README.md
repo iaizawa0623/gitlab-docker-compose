@@ -11,8 +11,8 @@ vi .env
 
 ### オレオレ証明書を作成する場合(公開サーバでは使用しないでください!)
 ```bash
-mkdir -p certs
-cd certs
+mkdir -p ssl
+cd ssl
 
 # rootCAの秘密鍵を作成
 openssl genrsa -out ca.key -aes256 2048
@@ -34,7 +34,7 @@ keyUsage               = critical, keyCertSign, cRLSign
 EOF
 
 # rootCAの証明書の作成（自己署名）
-openssl x509 -req -in ca.csr -signkey ca.key -days 365 -sha256 -extfile rootca_v3.ext -out ca.crt
+openssl x509 -req -in ca.csr -signkey ca.key -days 3650 -sha256 -extfile rootca_v3.ext -out ca.crt
 
 # rootCAの証明書の内容を確認
 openssl x509 -text -noout -in ca.crt
@@ -58,6 +58,10 @@ openssl x509 -in $DOMAIN.csr -CA ca.crt -CAkey ca.key -days 3650 -req -sha256 -e
 
 # サーバー証明書の中身を確認
 openssl x509 -text < $DOMAIN.crt
+
+# pemファイルへ変換
+openssl x509 -in $DOMAIN.crt -out $DOMAIN.der -outform DER
+openssl x509 -in $DOMAIN.der -inform DER -out $DOMAIN.pem -outform pem
 
 cd -
 ```
