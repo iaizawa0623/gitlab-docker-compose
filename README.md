@@ -11,8 +11,8 @@ vi .env
 
 ### オレオレ証明書を作成する場合(公開サーバでは使用しないでください!)
 ```bash
-mkdir -p gitlab/config/ssl
-cd gitlab/config/ssl
+mkdir -p certs
+cd certs
 
 # rootCAの秘密鍵を作成
 openssl genrsa -out ca.key -aes256 2048
