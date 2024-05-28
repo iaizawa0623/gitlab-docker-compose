@@ -21,11 +21,7 @@ cd ssl
 ORG="`whoami`"
 ROOT_CA="`whoami`_ROOT_CA"
 INTER_CA="`whoami`_INTER_CA"
-if [ `hostname | grep '.local'` ] ; then
-  DOMAIN=`hostname`
-else
-  DOMAIN=`hostname`.local
-fi
+DOMAIN='gitlab.local'
 
 # 20 years
 ROOT_DAYS=7300
