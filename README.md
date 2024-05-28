@@ -27,6 +27,13 @@ else
   DOMAIN=`hostname`.local
 fi
 
+# 20 years
+ROOT_DAYS=7300
+# 10 years
+INTER_DAYS=3650
+# 1 years+
+SERVER_DAYS=397
+
 # ルート証明書の設定
 cat > ${ROOT_CA}_v3.ext << EOF
 basicConstraints       = critical, CA:true
@@ -70,7 +77,7 @@ openssl req -new -key $ROOT_CA.key -out $ROOT_CA.csr -subj "/C=JP/ST=Tokyo/O=$OR
 # openssl req -text -noout -in $ROOT_CA.csr
 
 # ルート証明書の作成（自己署名）
-openssl x509 -req -in $ROOT_CA.csr -signkey $ROOT_CA.key -days 3650 -sha256 -extfile $ROOT_CA.ext -out $ROOT_CA.crt
+openssl x509 -req -in $ROOT_CA.csr -signkey $ROOT_CA.key -days ${ROOT_DAYS} -sha256 -extfile $ROOT_CA.ext -out $ROOT_CA.crt
 
 # ルート証明書の内容を確認
 # openssl x509 -text -noout -in $ROOT_CA.crt
@@ -92,7 +99,7 @@ openssl req -new -key $INTER_CA.key -out $INTER_CA.csr -subj "/C=JP/ST=Tokyo/O=$
 # openssl req -text -noout -in $INTER_CA.csr
 
 # 中間証明書の証明書の作成（ルート証明書で署名）
-openssl x509 -req -in $INTER_CA.csr -CA $ROOT_CA.crt -CAkey $ROOT_CA.key -CAcreateserial -days 365 -sha256 -out $INTER_CA.crt -extfile ${ROOT_CA}_x3.ext
+openssl x509 -req -in $INTER_CA.csr -CA $ROOT_CA.crt -CAkey $ROOT_CA.key -CAcreateserial -days ${INTER_DAYS} -sha256 -out $INTER_CA.crt -extfile ${ROOT_CA}_x3.ext
 
 # -------------------------------------------
 # サーバー証明書を作成
@@ -105,7 +112,7 @@ openssl genrsa 2048 > $DOMAIN.key
 openssl req -new -key $DOMAIN.key -subj "/C=JP/ST=Tokyo/O=$ORG/CN=$DOMAIN" > $DOMAIN.csr
 
 # プライベート認証局で署名してサーバー証明書を作成
-openssl x509 -in $DOMAIN.csr -CA $ROOT_CA.crt -CAkey $ROOT_CA.key -days 3650 -req -sha256 -extfile ${DOMAIN}_v3.ext > $DOMAIN.crt
+openssl x509 -in $DOMAIN.csr -CA $ROOT_CA.crt -CAkey $ROOT_CA.key -days ${SERVER_DAYS} -req -sha256 -extfile ${DOMAIN}_v3.ext > $DOMAIN.crt
 
 # サーバー証明書の中身を確認
 # openssl x509 -text < $DOMAIN.crt
