@@ -33,24 +33,14 @@ SERVER_DAYS=397
 
 # ルート証明書の設定
 cat > ${ROOT_CA}.ext << EOF
-basicConstraints       = critical, CA:true
-subjectKeyIdentifier   = hash
-keyUsage               = critical, keyCertSign, cRLSign
 EOF
 
 # 中間証明書の設定
 cat > ${INTER_CA}.ext << EOF
-basicConstraints       = critical, CA:true
-subjectKeyIdentifier   = hash
-keyUsage               = critical, keyCertSign, cRLSign
 EOF
 
 # サーバー証明書の設定
 cat > ${DOMAIN}.ext << EOF
-authorityKeyIdentifier = critical, keyid, issuer
-basicConstraints       = critical, CA:FALSE
-keyUsage               = critical, digitalSignature, keyEncipherment
-extendedKeyUsage       = serverAuth, clientAuth
 subjectAltName         = @alt_names
 [alt_names]
 DNS.1 = $DOMAIN
@@ -96,7 +86,7 @@ openssl req -new -key $INTER_CA.key -out $INTER_CA.csr -subj "/C=JP/ST=Tokyo/O=$
 # openssl req -text -noout -in $INTER_CA.csr
 
 # 中間証明書の証明書の作成（ルート証明書で署名）
-openssl x509 -req -in $INTER_CA.csr -CA $ROOT_CA.crt -CAkey $ROOT_CA.key -CAcreateserial -days ${INTER_DAYS} -sha256 -out $INTER_CA.crt -extfile ${ROOT_CA}.ext
+openssl x509 -req -in $INTER_CA.csr -CA $ROOT_CA.crt -CAkey $ROOT_CA.key -CAcreateserial -days ${INTER_DAYS} -sha256 -out $INTER_CA.crt -extfile ${INTER_CA}.ext
 
 # -------------------------------------------
 # サーバー証明書を作成
@@ -108,15 +98,20 @@ openssl genrsa 2048 > $DOMAIN.key
 # 署名要求書を作成
 openssl req -new -key $DOMAIN.key -subj "/C=JP/ST=Tokyo/O=$ORG/CN=$DOMAIN" > $DOMAIN.csr
 
-# プライベート認証局で署名してサーバー証明書を作成
-openssl x509 -in $DOMAIN.csr -CA $INTER_CA.crt -CAkey $INTER_CA.key -days ${SERVER_DAYS} -req -sha256 -extfile ${DOMAIN}.ext > $DOMAIN.crt
+# 中間証明書で署名してサーバー証明書を作成
+openssl x509 -req -in $DOMAIN.csr -CA $INTER_CA.crt -CAkey $INTER_CA.key -CAcreateserial -days ${SERVER_DAYS} -req -sha256 -extfile ${DOMAIN}.ext > $DOMAIN.crt
 
 # サーバー証明書の中身を確認
 # openssl x509 -text < $DOMAIN.crt
 
-# チェーンを追加
-cat $INTER_CA.crt >> $DOMAIN.crt
-cat $ROOT_CA.crt >> $DOMAIN.crt
+# フルチェーンの作成
+cat $ROOT_CA.crt > $DOMAIN.pem
+cat $INTER_CA.crt >> $DOMAIN.pem
+cat $DOMAIN.crt >> $DOMAIN.pem
+
+# 検証
+c_rehash .
+openssl verify -show_chain -CApath . $DOMAIN.pem
 
 cd -
 ```
