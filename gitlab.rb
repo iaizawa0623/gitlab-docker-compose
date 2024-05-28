@@ -18,7 +18,7 @@ nginx['redirect_http_to_https'] = true
 nginx['redirect_http_to_https_port'] = 80
 
 ##! Most root CA's are included by default
-# nginx['ssl_client_certificate'] = "/etc/gitlab/ssl/ca.crt"
+nginx['ssl_client_certificate'] = "/etc/gitlab/ssl/#{ENV['CA_CERT']}"
 
 nginx['ssl_certificate'] = "/etc/gitlab/ssl/#{node['fqdn']}.crt"
 nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/#{node['fqdn']}.key"
