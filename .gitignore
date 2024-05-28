@@ -1,11 +1,11 @@
 
-root_password.txt
 
-ssl/
 gitlab/
 
 *.key
 *.csr
-*.crt
 
 .env
+
+extfile.txt
+*.ext

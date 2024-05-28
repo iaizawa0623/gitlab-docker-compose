@@ -9,53 +9,103 @@ cp .env.sample .env
 vi .env
 ```
 
-### オレオレ証明書を作成する場合(公開サーバでは使用しないでください!)
+### プライベート認証局と証明書の作成
+公開サーバでは使用しないでください!
+
 ```bash
-mkdir -p ssl
 cd ssl
-CA="`whoami`_CA"
 
-# rootCAの秘密鍵を作成
-openssl genrsa -out $CA.key -aes256 2048
-
-# rootCAの秘密鍵の内容を確認
-# openssl rsa -text -noout -in $CA.key
-
-# rootCAの証明書署名要求の作成
-openssl req -new -key $CA.key -out $CA.csr -subj "/C=JP/ST=Tokyo/O=iaizawa/CN=$CA"
-
-# rootCAのCSRの内容を確認
-# openssl req -text -noout -in $CA.csr
-
-# 「X509.V3」の設定
-cat > rootca_v3.ext << EOF
-basicConstraints       = critical, CA:true
-subjectKeyIdentifier   = hash
-keyUsage               = critical, keyCertSign, cRLSign
-EOF
-
-# rootCAの証明書の作成（自己署名）
-openssl x509 -req -in $CA.csr -signkey $CA.key -days 3650 -sha256 -extfile rootca_v3.ext -out $CA.crt
-
-# rootCAの証明書の内容を確認
-# openssl x509 -text -noout -in $CA.crt
-
-# オレオレ証明書を作成する
+# -------------------------------------------
+# 環境変数設定
+# -------------------------------------------
+ORG="`whoami`"
+ROOT_CA="`whoami`_ROOT_CA"
+INTER_CA="`whoami`_INTER_CA"
 if [ `hostname | grep '.local'` ] ; then
   DOMAIN=`hostname`
 else
   DOMAIN=`hostname`.local
 fi
-echo "subjectAltName = DNS:$DOMAIN" > extfile.txt
+
+# ルート証明書の設定
+cat > ${ROOT_CA}_v3.ext << EOF
+basicConstraints       = critical, CA:true
+subjectKeyIdentifier   = hash
+keyUsage               = critical, keyCertSign, cRLSign
+EOF
+
+# 中間証明書の設定
+cat > ${INTER_CA}_v3.ext << EOF
+basicConstraints       = critical, CA:true
+subjectKeyIdentifier   = hash
+keyUsage               = critical, keyCertSign, cRLSign
+EOF
+
+# サーバー証明書の設定
+cat > ${DOMAIN}_v3.ext << EOF
+authorityKeyIdentifier = critical, keyid, issuer
+basicConstraints       = critical, CA:FALSE
+keyUsage               = critical, digitalSignature, keyEncipherment
+extendedKeyUsage       = serverAuth, clientAuth
+subjectAltName         = @alt_names
+[alt_names]
+DNS.1 = $DOMAIN
+DNS.2 = *.$DOMAIN
+EOF
+
+# -------------------------------------------
+# ルート証明書を作成
+# -------------------------------------------
+
+# ルート証明書の秘密鍵を作成
+openssl genrsa -out $ROOT_CA.key -aes256 2048
+
+# ルート証明書の秘密鍵の内容を確認
+# openssl rsa -text -noout -in $ROOT_CA.key
+
+# ルート証明書の署名要求の作成
+openssl req -new -key $ROOT_CA.key -out $ROOT_CA.csr -subj "/C=JP/ST=Tokyo/O=$ORG/CN=$ROOT_CA"
+
+# ルート証明書のCSRの内容を確認
+# openssl req -text -noout -in $ROOT_CA.csr
+
+# ルート証明書の作成（自己署名）
+openssl x509 -req -in $ROOT_CA.csr -signkey $ROOT_CA.key -days 3650 -sha256 -extfile $ROOT_CA.ext -out $ROOT_CA.crt
+
+# ルート証明書の内容を確認
+# openssl x509 -text -noout -in $ROOT_CA.crt
+
+# -------------------------------------------
+# 中間証明書を作成する
+# -------------------------------------------
+
+# 中間証明書の秘密鍵を作成
+openssl genrsa -out $INTER_CA.key -aes256 2048
+
+# 中間証明書の秘密鍵の内容を確認
+# openssl rsa -text -noout -in $INTER_CA.key
+
+# 中間証明書の証明書署名要求の作成
+openssl req -new -key $INTER_CA.key -out $INTER_CA.csr -subj "/C=JP/ST=Tokyo/O=$ORG/CN=$INTER_CA"
+
+# 中間証明書のCSRの内容を確認
+# openssl req -text -noout -in $INTER_CA.csr
+
+# 中間証明書の証明書の作成（ルート証明書で署名）
+openssl x509 -req -in $INTER_CA.csr -CA $ROOT_CA.crt -CAkey $ROOT_CA.key -CAcreateserial -days 365 -sha256 -out $INTER_CA.crt -extfile ${ROOT_CA}_x3.ext
+
+# -------------------------------------------
+# サーバー証明書を作成
+# -------------------------------------------
 
 # サーバー秘密鍵を作成
 openssl genrsa 2048 > $DOMAIN.key
 
 # 署名要求書を作成
-openssl req -new -key $DOMAIN.key -subj "/C=JP/ST=Tokyo/O=iaizawa/CN=$DOMAIN" > $DOMAIN.csr
+openssl req -new -key $DOMAIN.key -subj "/C=JP/ST=Tokyo/O=$ORG/CN=$DOMAIN" > $DOMAIN.csr
 
 # プライベート認証局で署名してサーバー証明書を作成
-openssl x509 -in $DOMAIN.csr -CA $CA.crt -CAkey $CA.key -days 3650 -req -sha256 -extfile extfile.txt > $DOMAIN.crt
+openssl x509 -in $DOMAIN.csr -CA $ROOT_CA.crt -CAkey $ROOT_CA.key -days 3650 -req -sha256 -extfile ${DOMAIN}_v3.ext > $DOMAIN.crt
 
 # サーバー証明書の中身を確認
 # openssl x509 -text < $DOMAIN.crt
