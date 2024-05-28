@@ -105,8 +105,7 @@ openssl x509 -req -in $DOMAIN.csr -CA $INTER_CA.crt -CAkey $INTER_CA.key -CAcrea
 # openssl x509 -text < $DOMAIN.crt
 
 # チェーンファイルの作成
-cat $ROOT_CA.crt > chain.pem
-cat $INTER_CA.crt >> chain.pem
+cat $ROOT_CA.crt $INTER_CA.crt > chain.pem
 
 cd -
 ```
