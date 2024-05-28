@@ -35,21 +35,21 @@ INTER_DAYS=3650
 SERVER_DAYS=397
 
 # ルート証明書の設定
-cat > ${ROOT_CA}_v3.ext << EOF
+cat > ${ROOT_CA}.ext << EOF
 basicConstraints       = critical, CA:true
 subjectKeyIdentifier   = hash
 keyUsage               = critical, keyCertSign, cRLSign
 EOF
 
 # 中間証明書の設定
-cat > ${INTER_CA}_v3.ext << EOF
+cat > ${INTER_CA}.ext << EOF
 basicConstraints       = critical, CA:true
 subjectKeyIdentifier   = hash
 keyUsage               = critical, keyCertSign, cRLSign
 EOF
 
 # サーバー証明書の設定
-cat > ${DOMAIN}_v3.ext << EOF
+cat > ${DOMAIN}.ext << EOF
 authorityKeyIdentifier = critical, keyid, issuer
 basicConstraints       = critical, CA:FALSE
 keyUsage               = critical, digitalSignature, keyEncipherment
@@ -99,7 +99,7 @@ openssl req -new -key $INTER_CA.key -out $INTER_CA.csr -subj "/C=JP/ST=Tokyo/O=$
 # openssl req -text -noout -in $INTER_CA.csr
 
 # 中間証明書の証明書の作成（ルート証明書で署名）
-openssl x509 -req -in $INTER_CA.csr -CA $ROOT_CA.crt -CAkey $ROOT_CA.key -CAcreateserial -days ${INTER_DAYS} -sha256 -out $INTER_CA.crt -extfile ${ROOT_CA}_x3.ext
+openssl x509 -req -in $INTER_CA.csr -CA $ROOT_CA.crt -CAkey $ROOT_CA.key -CAcreateserial -days ${INTER_DAYS} -sha256 -out $INTER_CA.crt -extfile ${ROOT_CA}.ext
 
 # -------------------------------------------
 # サーバー証明書を作成
@@ -112,7 +112,7 @@ openssl genrsa 2048 > $DOMAIN.key
 openssl req -new -key $DOMAIN.key -subj "/C=JP/ST=Tokyo/O=$ORG/CN=$DOMAIN" > $DOMAIN.csr
 
 # プライベート認証局で署名してサーバー証明書を作成
-openssl x509 -in $DOMAIN.csr -CA $ROOT_CA.crt -CAkey $ROOT_CA.key -days ${SERVER_DAYS} -req -sha256 -extfile ${DOMAIN}_v3.ext > $DOMAIN.crt
+openssl x509 -in $DOMAIN.csr -CA $ROOT_CA.crt -CAkey $ROOT_CA.key -days ${SERVER_DAYS} -req -sha256 -extfile ${DOMAIN}.ext > $DOMAIN.crt
 
 # サーバー証明書の中身を確認
 # openssl x509 -text < $DOMAIN.crt
