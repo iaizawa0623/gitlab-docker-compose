@@ -33,14 +33,24 @@ SERVER_DAYS=397
 
 # ルート証明書の設定
 cat > ${ROOT_CA}.ext << EOF
+basicConstraints       = CA:true
+subjectKeyIdentifier   = hash
+keyUsage               = keyCertSign, cRLSign
 EOF
 
 # 中間証明書の設定
 cat > ${INTER_CA}.ext << EOF
+basicConstraints       = CA:true
+subjectKeyIdentifier   = hash
+keyUsage               = keyCertSign, cRLSign
 EOF
 
 # サーバー証明書の設定
 cat > ${DOMAIN}.ext << EOF
+authorityKeyIdentifier = keyid, issuer
+basicConstraints       = CA:FALSE
+keyUsage               = digitalSignature, keyEncipherment
+extendedKeyUsage       = serverAuth, clientAuth
 subjectAltName         = @alt_names
 [alt_names]
 DNS.1 = $DOMAIN
@@ -104,8 +114,11 @@ openssl x509 -req -in $DOMAIN.csr -CA $INTER_CA.crt -CAkey $INTER_CA.key -CAcrea
 # サーバー証明書の中身を確認
 # openssl x509 -text < $DOMAIN.crt
 
-# チェーンファイルの作成
-cat $ROOT_CA.crt $INTER_CA.crt > chain.pem
+# チェーンを追加
+cat $INTER_CA.crt $ROOT_CA.crt >> $DOMAIN.crt
+
+c_rehash .
+openssl verify -show_chain -CApath . $DOMAIN.crt
 
 cd -
 ```
