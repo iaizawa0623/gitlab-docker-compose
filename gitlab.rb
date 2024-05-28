@@ -17,7 +17,7 @@ nginx['client_max_body_size'] = '250m'
 nginx['redirect_http_to_https'] = true
 nginx['redirect_http_to_https_port'] = 80
 
-nginx['ssl_certificate'] = "/etc/gitlab/ssl/#{node['fqdn']}.crt"
+nginx['ssl_certificate'] = "/etc/gitlab/ssl/#{node['fqdn']}.pem"
 nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/#{node['fqdn']}.key"
 
 nginx['ssl_protocols'] = "TLSv1.2 TLSv1.3"
