@@ -1,11 +1,11 @@
 
+.env
 
+ssl/
 gitlab/
 
 *.key
 *.csr
-
-.env
-
-extfile.txt
 *.ext
+
+.DS_Store

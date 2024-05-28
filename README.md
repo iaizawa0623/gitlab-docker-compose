@@ -13,6 +13,7 @@ vi .env
 公開サーバでは使用しないでください!
 
 ```bash
+mkdir -p ssl
 cd ssl
 
 # -------------------------------------------
@@ -108,10 +109,14 @@ openssl genrsa 2048 > $DOMAIN.key
 openssl req -new -key $DOMAIN.key -subj "/C=JP/ST=Tokyo/O=$ORG/CN=$DOMAIN" > $DOMAIN.csr
 
 # プライベート認証局で署名してサーバー証明書を作成
-openssl x509 -in $DOMAIN.csr -CA $ROOT_CA.crt -CAkey $ROOT_CA.key -days ${SERVER_DAYS} -req -sha256 -extfile ${DOMAIN}.ext > $DOMAIN.crt
+openssl x509 -in $DOMAIN.csr -CA $INTER_CA.crt -CAkey $INTER_CA.key -days ${SERVER_DAYS} -req -sha256 -extfile ${DOMAIN}.ext > $DOMAIN.crt
 
 # サーバー証明書の中身を確認
 # openssl x509 -text < $DOMAIN.crt
+
+# チェーンを追加
+cat $INTER_CA.crt >> $DOMAIN.crt
+cat $ROOT_CA.crt >> $DOMAIN.crt
 
 cd -
 ```
