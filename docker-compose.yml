@@ -28,7 +28,6 @@ services:
       - db
 
   runner:
-    container_name: runner
     image: gitlab/gitlab-runner:latest
     hostname: ${GITLAB_HOSTNAME}
     deploy:
