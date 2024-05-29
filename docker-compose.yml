@@ -27,21 +27,21 @@ services:
     depends_on:
       - db
 
-  # runner:
-  #   container_name: runner
-  #   image: gitlab/gitlab-runner:latest
-  #   hostname: ${GITLAB_HOSTNAME}
-  #   deploy:
-  #     mode: replicated
-  #     replicas: 1
-  #   restart: always
-  #   # volumes:
-  #   #   - git/runner-config:/etc/gitlab-runner
-  #   #   - /var/run/docker.sock:/var/run/docker.sock
-  #   networks:
-  #     - gitlab
-  #   depends_on:
-  #     - gitlab
+  runner:
+    container_name: runner
+    image: gitlab/gitlab-runner:latest
+    hostname: ${GITLAB_HOSTNAME}
+    deploy:
+      mode: replicated
+      replicas: 4
+    restart: always
+    volumes:
+      - git/runner-config:/etc/gitlab-runner
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - gitlab
+    depends_on:
+      - gitlab
 
   db:
     container_name: db
