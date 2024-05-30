@@ -3,6 +3,7 @@
 
 ssl/
 gitlab/
+gitlab-runner/
 
 *.key
 *.csr

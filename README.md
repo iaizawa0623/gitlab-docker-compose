@@ -5,6 +5,8 @@ gitlab-docker-compose
 
 ### 環境変数設定
 ```bash
+mkdir -p gitlab-runner
+touch gitlab-runner/config.toml
 cp .env.sample .env
 vi .env
 ```

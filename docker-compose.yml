@@ -70,10 +70,6 @@ secrets:
 
 volumes:
   db:
-  # config:
-  # runner-config:
-  # logs:
-  # data:
 
 networks:
   gitlab:
