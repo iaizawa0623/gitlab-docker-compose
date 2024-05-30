@@ -24,7 +24,7 @@ services:
       - ./gitlab/config:/etc/gitlab
       - ./gitlab/logs:/var/log/gitlab
       - ./gitlab/data:/var/opt/gitlab
-      - ./ssl:/etc/gitlab/ssl
+      - ./certs:/etc/gitlab/certs
     depends_on:
       - db
 
@@ -37,7 +37,7 @@ services:
     volumes:
       - ./gitlab-runner:/etc/gitlab-runner
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./ssl:/ssl
+      - ./certs:/etc/gitlab-runner/certs
     depends_on:
       - gitlab
 
