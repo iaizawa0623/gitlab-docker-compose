@@ -125,6 +125,7 @@ openssl verify -show_chain -CApath . $DOMAIN.crt
 
 cd -
 cp ssl/*.crt certs/
+cp ssl/$DOMAIN.* certs/
 ```
 
 ## Run
