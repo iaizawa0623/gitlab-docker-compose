@@ -2,8 +2,10 @@
 .env
 
 ssl/
+certs/
+
 gitlab/
-gitlab-runner/
+runner/
 
 *.key
 *.csr

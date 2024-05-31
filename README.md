@@ -16,6 +16,7 @@ vi .env
 
 ```bash
 mkdir -p ssl
+mkdir -p certs
 cd ssl
 
 # -------------------------------------------
@@ -123,6 +124,7 @@ c_rehash .
 openssl verify -show_chain -CApath . $DOMAIN.crt
 
 cd -
+cp ssl/*.crt certs/
 ```
 
 ## Run

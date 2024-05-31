@@ -1,7 +1,7 @@
 
 services:
-  gitlab:
-    container_name: gitlab
+  gitlab.local:
+    container_name: gitlab.local
     image: gitlab/gitlab-ce:latest
     restart: always
     hostname: ${GITLAB_HOSTNAME}
@@ -35,11 +35,11 @@ services:
       replicas: 4
     restart: always
     volumes:
-      - ./gitlab-runner:/etc/gitlab-runner
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./certs:/etc/gitlab-runner/certs
+      - ./runner:/etc/runner
+      - ./certs:/etc/runner/certs
     depends_on:
-      - gitlab
+      - gitlab.local
 
   db:
     container_name: db
